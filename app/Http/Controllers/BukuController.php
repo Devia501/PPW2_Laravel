@@ -43,7 +43,7 @@ class BukuController extends Controller
      */
     public function create()
     {
-        //
+        return view('buku.create');
     }
 
     /**
@@ -51,7 +51,16 @@ class BukuController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'penulis' => 'required|string|max:255',
+            'tgl_terbit' => 'required|date',
+            'harga' => 'required|numeric'
+        ]);
+
+        Buku::create($request->all());
+
+        return redirect()->route('buku.index')->with('success', 'Buku berhasil ditambahkan.');
     }
 
     /**
@@ -59,7 +68,8 @@ class BukuController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $buku = Buku::findOrFail($id);
+        return view('buku.show', compact('buku'));
     }
 
     /**
@@ -67,7 +77,8 @@ class BukuController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $buku = Buku::findOrFail($id);
+        return view('buku.edit', compact('buku'));
     }
 
     /**
@@ -75,7 +86,17 @@ class BukuController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'penulis' => 'required|string|max:255',
+            'tgl_terbit' => 'required|date',
+            'harga' => 'required|numeric'
+        ]);
+
+        $buku = Buku::findOrFail($id);
+        $buku->update($request->all());
+
+        return redirect()->route('buku.index')->with('success', 'Buku berhasil diperbarui.');
     }
 
     /**
@@ -83,6 +104,9 @@ class BukuController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $buku = Buku::findOrFail($id);
+        $buku->delete();
+
+        return redirect()->route('buku.index')->with('success', 'Buku berhasil dihapus.');
     }
 }

@@ -10,11 +10,17 @@
     <button type="submit">Cari</button>
 </form>
 
+<a href="{{ route('buku.create') }}" class="btn btn-primary mb-3">+ Tambah Buku</a>
+
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>No</th><th>Judul Buku</th><th>Penulis</th>
-            <th>Harga</th><th>Tanggal Terbit</th>
+            <th>No</th>
+            <th>Judul Buku</th>
+            <th>Penulis</th>
+            <th>Harga</th>
+            <th>Tanggal Terbit</th>
+            <th>Aksi</th>
         </tr>
     </thead>
     <tbody>
@@ -26,9 +32,19 @@
             <td>{{ $b->penulis }}</td>
             <td>{{ 'Rp '.number_format($b->harga,0,',','.') }}</td>
             <td>{{ \Carbon\Carbon::parse($b->tgl_terbit)->format('d/m/Y') }}</td>
+            <td>
+                <a href="{{ route('buku.edit', $b->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                <form action="{{ route('buku.destroy', $b->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" onclick="return confirm('Yakin mau dihapus?')" class="btn btn-sm btn-danger">
+                        Hapus
+                    </button>
+                </form>
+            </td>
         </tr>
     @empty
-        <tr><td colspan="5">Buku tidak ditemukan.</td></tr>
+        <tr><td colspan="6">Buku tidak ditemukan.</td></tr>
     @endforelse
     </tbody>
 </table>
