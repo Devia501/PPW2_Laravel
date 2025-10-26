@@ -1,25 +1,38 @@
 <?php
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AboutController;
-use App\Http\Controllers\BukuController;
 
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BukuController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Di sini tempat kamu mendaftarkan route web aplikasi.
+| File ini otomatis dimuat oleh RouteServiceProvider.
+|
+*/
+
+// Halaman utama (tanpa login)
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/about', [AboutController::class, 'index']);
+// Semua route di bawah ini harus login dulu
+Route::middleware(['auth', 'verified'])->group(function () {
 
-// Buku (CRUD)
-Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
+    // Dashboard
+    Route::get('/dashboard', [BukuController::class, 'index'])->name('dashboard');
 
-// Tambah Buku
-Route::get('/buku/create', [BukuController::class, 'create'])->name('buku.create');
-Route::post('/buku/store', [BukuController::class, 'store'])->name('buku.store');
+    // Resource Buku
+    Route::resource('buku', BukuController::class);
 
-// Edit Buku
-Route::get('/buku/{id}/edit', [BukuController::class, 'edit'])->name('buku.edit');
-Route::put('/buku/{id}', [BukuController::class, 'update'])->name('buku.update');
+    // Profile (default dari Breeze)
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-
-// Delete
-Route::delete('/buku/{id}', [BukuController::class, 'destroy'])->name('buku.destroy');
+// Auth routes (login, register, forgot password, dsb)
+require __DIR__.'/auth.php';
